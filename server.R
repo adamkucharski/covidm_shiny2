@@ -172,9 +172,9 @@ function(input, output, session)
     # TODO tidy this up...
     parameters = reactive({
         # # return default parameters if no input
-        # if (is.null(input$epi_seed_size)) {
-        #     return (cm_translate_parameters(cm_parameters_SEI3R("UK | UNITED KINGDOM")))
-        # }
+        if (is.null(input$epi_seed_size)) {
+            return (cm_translate_parameters(cm_parameters_SEI3R("UK | UNITED KINGDOM")))
+        }
         
         params = cm_parameters_SEI3R("UK | UNITED KINGDOM", current_matrix(), deterministic = T, 
             date_start = input$epi_seed_date, date_end = input$epi_seed_date + as.numeric(input$epi_sim_time),
@@ -192,6 +192,8 @@ function(input, output, session)
         
         params$pop[[1]]$seed_times = rep(0, as.numeric(input$epi_seed_size));
         params = cm_split_matrices_ex_in(params, 1 + as.numeric(input$int_elderly) / 5);
+        
+
         
         burd = burdens_dt();
         params$processes = burden_processes;
@@ -583,15 +585,16 @@ function(input, output, session)
         default_mat = matrix_lookup[country == pid, matrix][1];
         html("con_default_label", paste0(default_mat, " (default matrix for ", wp_reg[key == input$loc_reg0, name][1], ")"));
 
-        if (input$con_matrix == "default") {
-            if (!is.null(default_mat) && !is.na(default_mat) && default_mat %in% names(cm_matrices)) {
-                return (default_mat);
-            } else {
-                return ("United Kingdom (Mossong)");
-            }
-        } else {
-            return (input$con_custom);
-        }
+        # if (input$con_matrix == "default") {
+        #     if (!is.null(default_mat) && !is.na(default_mat) && default_mat %in% names(cm_matrices)) {
+        #         return (default_mat);
+        #     } else {
+        #         return ("United Kingdom (Mossong)");
+        #     }
+        # } else {
+        #     return (input$con_custom);
+        # }
+        return ("United Kingdom (Mossong)");
     });
     
     output$con_home   = renderImage({ embed_svg(vvplot(230, 230, vvpanel(vvmatrix(cm_matrices[[current_matrix()]]$home), xtick = 90, title = "Contacts at home", xlab = "Age of individual", ylab = "Age of contacts", margin = c(15, 15, 45, 45)))) }, deleteFile = TRUE);
