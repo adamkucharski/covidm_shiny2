@@ -14,6 +14,14 @@ library(yaml)
 library(qs) # remotes::install_github("traversc/qs@legacy")
 library(rgeolocate)
 
+# package_url <- "https://cran.r-project.org/src/contrib/Archive/rgeolocate/rgeolocate_1.4.2.tar.gz"
+# install.packages(package_url, repos=NULL, type="source")
+
+# package_url2 <- "https://cran.r-project.org/src/contrib/Archive/covidregionaldata/covidregionaldata_0.9.3.tar.gz"
+# install.packages(package_url2, repos=NULL, type="source")
+
+# Missing: HDInterval,RcppGSL, brew install libomp
+
 # COVIDM
 cm_path = "./covidm/";
 cm_force_rebuild = F;
