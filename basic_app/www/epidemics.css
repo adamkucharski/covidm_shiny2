@@ -1,0 +1,34 @@
+@import url(https://use.fontawesome.com/releases/v5.13.0/css/all.css);
+
+/* Newer version of fontawesome */
+.nav-tabs > li { text-align: center; margin-right: 0 }
+.nav-tabs > li > a { border-radius: 10px 10px 0 0 }
+
+ /* Custom slider */
+.irs-bar, .irs-bar-edge { background-color: #98978b }
+.irs-slider { border: 3px solid #98978b; border-radius: 10px }
+.irs-single { background-color: #f0f0f0; color: #000000 }
+.irs-min, .irs-max { background-color: #f8f5f0; color: #98978b }
+
+ /* For help button */
+.btn-info.active { background-color: #e48721 }
+.btn-info.active:hover { background-color: #e48721 }
+.btn-info.active:focus { background-color: #e48721 }
+.btn-info.active:active { background-color: #e48721 }
+.btn-info { background-color: #98978b }
+.btn-info:hover { background-color: #98978b }
+.btn-info:focus { background-color: #98978b }
+.btn-info:active { background-color: #98978b }
+
+ /* For new interventions */
+.new_intervention { background-color: #f8f5f0; padding: 4px; cursor: copy }
+.new_intervention:hover { background-color: #e8e5f0 }
+
+ /* For intervention rectangle */
+.interv_rect:hover { cursor: grab }
+.interv_rect:active { cursor: grabbing }
+
+ /* For intervention dropdown */
+.btn-int { background: none; margin: 2px }
+.noselect { -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none }
+ .dropdown-menu { opacity: 0.75 }
