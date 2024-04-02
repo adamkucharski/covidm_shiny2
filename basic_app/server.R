@@ -1,3 +1,5 @@
+# BASIC SHINY APP SERVER
+
 server <- function(input, output,session) {
     
     # ---------- SET UP ----------

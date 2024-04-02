@@ -1,3 +1,5 @@
+# BASIC SHINY APP UI
+
 # Load libraries and functions
 source("load.R")
 source("vvplot.R")
@@ -244,7 +246,7 @@ ui <- fluidPage(
                     # About controls
                     tabPanel(value = "about", title = iconTab("tab_about", "About", "ellipsis-h"),
                              tags$br(),
-                             h3("LSHTM COVID-19 Transmission App (beta version 2)"),
+                             h3("Adapted from: LSHTM COVID-19 Transmission App (beta version 2)"),
                              p("Nicholas G. Davies, Paul S. Wikramaratna, Samuel Clifford, Adam J. Kucharski, Amy Gimma, Kevin van Zandvoort, Kiesha Prem, Yang Liu, Carl A. B. Pearson, ", a(href = "https://cmmid.github.io/groups/ncov-group.html", "the CMMID COVID-19 Working Group,"), "Petra Klepac, Mark Jit, W. John Edmunds, Rosalind M. Eggo"),
                              p("This is a beta testing version of the app. If you have any feedback for us, please ", a(href = "https://forms.gle/VERmNQXwSSfe3YCG8", "submit it here"), "."),
                              p("This app uses an age-structured mathematical model developed by researchers at the London School of Hygiene and Tropical Medicine that simulates SARS-CoV-2 transmission in a population. It assumes that people infected with SARS-CoV-2 can either develop clinical symptoms (clinical infections) or only develop mild or no symptoms (subclinical infections), in which case the infection goes unnoticed. Children are assumed to be less susceptible to infection, and less likely to show clinical symptoms, than adults. The model also estimates the ", a(href="https://www.eurosurveillance.org/content/10.2807/1560-7917.ES.2020.25.12.2000256", "number of deaths from COVID-19"), " as well as the number of hospital beds occupied. A full explanation of the model can be found in the paper ", a(href="https://cmmid.github.io/topics/covid19/age_hypotheses.html", "'Age-dependent effects in the transmission and control of COVID-19 epidemics'"), ". Results from this model are being used by public health experts and policymakers ", a(href="https://cmmid.github.io/topics/covid19/uk-scenario-modelling.html", "in the UK"), " and around the world."),
