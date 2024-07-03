@@ -156,7 +156,7 @@ server <- function(input, output,session) {
     
     
     #observeEvent(input$run_model, {
-    observe({
+    output$cases_plot <- renderImage({
         # Load contact and population data
         polymod <- socialmixr::polymod
         contact_data <- socialmixr::contact_matrix(
@@ -188,6 +188,43 @@ server <- function(input, output,session) {
             initial_conditions = initial_conditions
         )
         
+        # Calculate transmission rate
+        # Recovery rate
+        recovery_rate_in <- 1/7
+        R0_in <- input$epi_R0
+        transmission_rate_in <- R0_in*recovery_rate_in
+        
+        # Calculate range of times shown on X axis
+        # NOTE: changed from original dates
+        xaxis_breaks = breaks_pretty(5)(c(0,as.numeric(input$epi_sim_time)));
+        ax_t0 = as.numeric(xaxis_breaks[1]);
+        ax_t1 = as.numeric(tail(xaxis_breaks, 1));
+        tref = as.numeric(0);
+        
+        # Set intervention schedule
+        params_schedule = list();
+        for (i in 1:length(iv$active)) {
+            if (iv$active[i]) {
+                params_schedule[[length(params_schedule) + 1]] = list(
+                    parameter = "contact",
+                    pops = 0,
+                    mode = "lowerto",
+                    values = list(iv_def[[as.numeric(input[[paste0("int_type_", i)]])]]$contact(input[[paste0("int_strength_", i)]] / 100), numeric(0)),
+                    times = c(iv$t0[i] - tref, iv$t1[i] - tref)
+                );
+                params_schedule[[length(params_schedule) + 1]] = list(
+                    parameter = "fIs",
+                    pops = 0,
+                    mode = "lowerto",
+                    values = list(iv_def[[as.numeric(input[[paste0("int_type_", i)]])]]$fIs(input[[paste0("int_strength_", i)]] / 100), numeric(0)),
+                    times = c(iv$t0[i] - tref, iv$t1[i] - tref)
+                );
+            }
+        }
+        
+        print(params_schedule)
+        
+        
         close_schools <- intervention(
             type = "contacts",
             time_begin = 200,
@@ -204,18 +241,13 @@ server <- function(input, output,session) {
             reduction = matrix(c(0.01, 0.3, 0.01))
         )
         
-        # Calculate transmission rate
-        # Recovery rate
-        recovery_rate_in <- 1/7
-        R0_in <- input$epi_R0
-        transmission_rate_in <- R0_in*recovery_rate_in
-        
         # Mitigated
         output_data_mit <- model_default(
             population = uk_population,
             transmission_rate = transmission_rate_in,
             infectiousness_rate = 1.0 / 3.0,
             recovery_rate = recovery_rate_in,
+            intervention = list(contacts = c(close_schools,close_workplaces)),
             time_end = as.numeric(input$epi_sim_time), increment = 1.0
         )
         
@@ -233,7 +265,6 @@ server <- function(input, output,session) {
             transmission_rate = transmission_rate_in,
             infectiousness_rate = 1.0 / 3.0,
             recovery_rate = recovery_rate_in,
-            intervention = list(contacts = c(close_schools,close_workplaces)),
             time_end = as.numeric(input$epi_sim_time), increment = 1.0
         )
         
@@ -253,9 +284,7 @@ server <- function(input, output,session) {
         deathsU <- sum(unmit_out)
         deathsM <- sum(mit_out)
 
-        output$cases_plot <- renderImage({
-            
-            embed_svg(vvplot(960, 480, 
+        embed_svg(vvplot(960, 480, 
                              vvpanel(
                                  if (input$compare) vvline(unmit_out$time, unmit_out$total, style = "stroke:#afc6e9") else NULL, 
                                  vvline(mit_out$time, mit_out$total, style = "stroke:#0044aa; stroke-width: 2px"),
@@ -274,10 +303,11 @@ server <- function(input, output,session) {
                                  c(860, 320, 100, 160)
                              )
             ));
+        
         }, deleteFile = TRUE);
 
         
-    })
+
     
     
     # ---------- DISPLAY PANEL ----------

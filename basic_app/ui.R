@@ -8,9 +8,10 @@ source("vvplot.R")
 ui <- fluidPage(
     theme = shinytheme("sandstone"),
     useShinyjs(),
+    
     chooseSliderSkin("Square"),
     
-    #Load css
+    #Load CSS (previously in ui.R file)
     tags$head( tags$link(rel = "stylesheet", type = "text/css", href = "epidemics.css") ),
     
     h3(id = "title", style = "text-align: center", "CMMID COVID-19 transmission app"),

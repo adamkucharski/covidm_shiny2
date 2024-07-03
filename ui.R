@@ -1,6 +1,7 @@
 # covidm shiny app: interface
 
 source("./load.R")
+source("./vvplot.R")
 
 ui = function(req) {
 fluidPage(theme = shinytheme("sandstone"),
