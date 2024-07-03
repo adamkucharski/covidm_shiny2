@@ -157,6 +157,9 @@ server <- function(input, output,session) {
     
     #observeEvent(input$run_model, {
     output$cases_plot <- renderImage({
+        
+        # NEED TO CALL update_iv_x() ?
+        
         # Load contact and population data
         polymod <- socialmixr::polymod
         contact_data <- socialmixr::contact_matrix(
