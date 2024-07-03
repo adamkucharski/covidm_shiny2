@@ -210,7 +210,25 @@ server <- function(input, output,session) {
         R0_in <- input$epi_R0
         transmission_rate_in <- R0_in*recovery_rate_in
         
-        output_data <- model_default(
+        # Mitigated
+        output_data_mit <- model_default(
+            population = uk_population,
+            transmission_rate = transmission_rate_in,
+            infectiousness_rate = 1.0 / 3.0,
+            recovery_rate = recovery_rate_in,
+            time_end = as.numeric(input$epi_sim_time), increment = 1.0
+        )
+        
+        mit_out_raw <- new_infections(output_data_mit, by_group = TRUE)
+        
+        # Summing the new_infections by time
+        mit_out <- mit_out_raw |> 
+            group_by(time) |> 
+            summarise(total = sum(new_infections, na.rm = TRUE)) |> 
+            ungroup()
+        
+        # Unmitigated
+        output_data_unmit <- model_default(
             population = uk_population,
             transmission_rate = transmission_rate_in,
             infectiousness_rate = 1.0 / 3.0,
@@ -219,70 +237,45 @@ server <- function(input, output,session) {
             time_end = as.numeric(input$epi_sim_time), increment = 1.0
         )
         
-        data_infections <- new_infections(output_data, by_group = TRUE)
+        unmit_out_raw <- new_infections(output_data_unmit, by_group = TRUE)
+        
+        # Summing the new_infections by time
+        unmit_out <- unmit_out_raw |> 
+            group_by(time) |> 
+            summarise(total = sum(new_infections, na.rm = TRUE)) |> 
+            ungroup()
+        
+        # Total outputs - NEED TO UPDATE HOSPITALISATIONS & DEATHS
+        casesU <- sum(unmit_out)
+        casesM <- sum(mit_out)
+        hospsU <- sum(unmit_out)
+        hospsM <- sum(mit_out)
+        deathsU <- sum(unmit_out)
+        deathsM <- sum(mit_out)
 
-        output$cases_plot <- renderPlot({
-            plot_intervention_cases <-
-                ggplot() +
-                geom_vline(
-                    xintercept = c(
-                        close_schools$time_begin,
-                        close_schools$time_end
-                    ),
-                    linetype = "dotted"
-                ) +
-                geom_vline(
-                    xintercept = c(
-                        close_workplaces$time_begin,
-                        close_workplaces$time_end
-                    ),
-                    colour = "red",
-                    linetype = "dotted"
-                ) +
-                annotate(
-                    geom = "text",
-                    x = mean(c(close_schools$time_begin, close_schools$time_end)),
-                    y = 50000,
-                    label = "Schools closed"
-                ) +
-                annotate(
-                    geom = "text",
-                    x = mean(c(
-                        close_workplaces$time_begin,
-                        close_workplaces$time_end
-                    )),
-                    y = 30000,
-                    colour = "red",
-                    label = "Workplaces\nclosed"
-                ) +
-                geom_line(
-                    data = data_infections,
-                    aes(time, new_infections, colour = demography_group),
-                    linetype = "solid"
-                ) +
-                scale_y_sqrt(
-                    labels = scales::comma,
-                    breaks = c(10^seq(3, 5), 5e4)
-                ) +
-                scale_colour_brewer(
-                    palette = "Dark2",
-                    name = "Age group"
-                ) +
-                coord_cartesian(
-                    expand = FALSE
-                ) +
-                theme_bw() +
-                theme(
-                    legend.position = "top"
-                ) +
-                labs(
-                    x = "Simulation time (days)",
-                    linetype = "Compartment",
-                    y = "Individuals"
-                )
+        output$cases_plot <- renderImage({
             
-            plot_intervention_cases
-        })
+            embed_svg(vvplot(960, 480, 
+                             vvpanel(
+                                 if (input$compare) vvline(unmit_out$time, unmit_out$total, style = "stroke:#afc6e9") else NULL, 
+                                 vvline(mit_out$time, mit_out$total, style = "stroke:#0044aa; stroke-width: 2px"),
+                                 NULL,
+                                 vvlegend("line", 0.8, 0.95, "#0044aa", "Cases"),
+                                 ylab = "Cases"
+                             ),
+                             
+                             vvpanel(vvbar(c("Unmit.", "Mit."), c(casesU, casesM), c("fill:#afc6e9", "fill:#0044aa"), show = TRUE), ylab = "Cases"),
+                             vvpanel(vvbar(c("Unmit.", "Mit."), c(hospsU, hospsM), c("fill:#c6afe9", "fill:#9955ff"), show = TRUE), ylab = "Hospitalisations"),
+                             vvpanel(vvbar(c("Unmit.", "Mit."), c(deathsU, deathsM), c("fill:#e9afaf", "fill:#c83737"), show = TRUE), ylab = "Deaths"),
+                             layout = list(
+                                 c(0, 0, 860, 480),
+                                 c(860, 0, 100, 160),
+                                 c(860, 160, 100, 160),
+                                 c(860, 320, 100, 160)
+                             )
+            ));
+        }, deleteFile = TRUE);
+
         
     })
     

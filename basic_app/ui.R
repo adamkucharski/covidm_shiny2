@@ -28,7 +28,7 @@ ui <- fluidPage(
         # Display tabs
         tabsetPanel(id = "display_tabs",
                     tabPanel(value = "cases", title = iconTab("tab_cases", "Cases", "head-side-cough"),
-                             imageOutput("cases_plot"), style = "padding:10px"), #, width = 960, height = 480
+                             imageOutput("cases_plot", width = 960, height = 480), style = "padding:10px"), #
                     tabPanel(value = "hospital", title = iconTab("tab_hospital", "Hospital", "ambulance"), 
                              imageOutput("hospital_plot", width = 960, height = 480), style = "padding:10px"),
                     tabPanel(value = "deaths", title = iconTab("tab_deaths", "Deaths", "times"), 
