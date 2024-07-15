@@ -1,5 +1,5 @@
 Fork from the [covidm_shiny2 repo](https://github.com/nicholasdavies/covidm_shiny2).
 
-An initial development version is on the [`simplify-model` branch](https://github.com/adamkucharski/covidm_shiny2/tree/simplify_model).
+An initial development version is on the [`simplify-model` branch](https://github.com/adamkucharski/covidm_shiny2/tree/simplify_model). _Note this is under active development so many features will not be working currently._
 
 The app is inside the (`basic_app`](https://github.com/adamkucharski/covidm_shiny2/tree/simplify_model/basic_app) folder, and can be run with `runApp()` once relevant packages installed.
